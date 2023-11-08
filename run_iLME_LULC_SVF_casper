@@ -1,0 +1,13 @@
+#!/bin/bash -l
+#PBS -N SVF_LULC1_iLME
+# PBS -A UCSB0006
+#PBS -l select=1:ncpus=12:mem=10GB
+#PBS -l walltime=24:00:00
+#PBS -q casper
+#PBS -j oe
+
+cd /glade/u/home/samantha/codes/CESM_reshape
+bash
+
+sh ./iLME_LULC_SVF.sh
+
