@@ -1,14 +1,20 @@
 # Run SVF postprocessing on iLME LULC member #1 using command-line PyReshaper
 
-#!/usr/bin/bash
+# !/usr/bin/bash
 
-#module load conda
-#conda activate npl_ss2023
+# Full set of file prefixes for all model components: you may not want to run all of them at once depending on runtimes
+# cice.h: monthly sea ice output
+# clm2.h0: monthly land output
+# clm2.h1: daily land output
+# pop.h.nday1: daily ocean output
+# pop.h: monthly ocean output
+# cam.h0: monthly atmosphere output
+# cam.h1: daily atmosphere output
+# declare -a comps=('cice.h' 'clm2.h0' 'clm2.h1' 'pop.h.nday1' 'pop.h' 'cam.h0' 'cam.h1')
 
-# Full list of prefixes for model components: choose a subset that fits your needs
-#declare -a comps=('cice.h' 'clm2.h0' 'clm2.h1' 'pop.h.nday1' 'pop.h' 'cam.h0' 'cam.h1')
+declare -a comps=('cam.h1')  # Daily atmosphere data only
 
-declare -a comps=('clm2.h0')
+# Specify name of case, starting and ending years (these will be used in the final post-processed filename)
 case="b.ie12.B1850C5CN.f19_g16.LME.LULC.001"
 startyr="1690"
 endyr="2005"
@@ -17,6 +23,7 @@ endyr="2005"
 for comp in "${comps[@]}"; do
     echo ${comp}
 
+    # Extract appropriate subdirectories to use for given model component
     case ${comp} in
         cam.h1)
             dir='atm'
@@ -48,8 +55,11 @@ for comp in "${comps[@]}"; do
             subdir='daily'
             ;;
     esac
+    
+    #echo /glade/scratch/samantha/${case}/archive/${dir}/hist/${case}"."${comp}"."[^0-9].*.nc
+    #echo ${case}"_"${comp}.s2s
 
-
+    # Call and run PyReshaper
     s2smake \
       --netcdf_format="netcdf4" \
       --compression_level=1 \
